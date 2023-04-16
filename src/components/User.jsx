@@ -2,7 +2,7 @@ import React from "react";
 
 export default function User({ user: { photoURL, displayName } }) {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center shrink-0">
       <img
         src={photoURL}
         alt={displayName}
