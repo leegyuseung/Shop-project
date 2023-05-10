@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import Button from "../components/ui/Button";
 import { uploadImage } from "../api/uploader";
-import { addNewProduct } from "../api/firebase";
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import useProducts from "../hooks/useProducts";
 
 export default function NewProducts() {
   const [product, setProduct] = useState({});
@@ -14,12 +9,7 @@ export default function NewProducts() {
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState();
 
-  const queryClient = useQueryClient();
-  // products 키를 가진 데이터를 업데이트함
-  const addProduct = useMutation(
-    ({ product, url }) => addNewProduct(product, url),
-    { onSuccess: () => queryClient.invalidateQueries(["products"]) }
-  );
+  const { addProduct } = useProducts();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
