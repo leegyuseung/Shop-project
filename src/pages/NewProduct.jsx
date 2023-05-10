@@ -15,7 +15,6 @@ export default function NewProducts() {
     const { name, value, files } = e.target;
     if (name === "file") {
       setFile(files && files[0]);
-      console.log(files[0]);
       return;
     }
     setProduct((product) => ({ ...product, [name]: value }));
@@ -37,7 +36,6 @@ export default function NewProducts() {
             },
           }
         );
-        console.log(url);
         // Firebase에 새로운 제품을 추가함
       })
       .finally(() => setIsUploading(false));
