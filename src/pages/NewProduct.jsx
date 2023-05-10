@@ -2,12 +2,24 @@ import React, { useState } from "react";
 import Button from "../components/ui/Button";
 import { uploadImage } from "../api/uploader";
 import { addNewProduct } from "../api/firebase";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 export default function NewProducts() {
   const [product, setProduct] = useState({});
   const [file, setFile] = useState();
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState();
+
+  const queryClient = useQueryClient();
+  // products 키를 가진 데이터를 업데이트함
+  const addProduct = useMutation(
+    ({ product, url }) => addNewProduct(product, url),
+    { onSuccess: () => queryClient.invalidateQueries(["products"]) }
+  );
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -24,14 +36,19 @@ export default function NewProducts() {
     setIsUploading(true);
     uploadImage(file) //
       .then((url) => {
+        addProduct.mutate(
+          { product, url },
+          {
+            onSuccess: () => {
+              setSuccess("성공적으로 제품이 추가되었습니다.");
+              setTimeout(() => {
+                setSuccess(null);
+              }, 4000);
+            },
+          }
+        );
         console.log(url);
         // Firebase에 새로운 제품을 추가함
-        addNewProduct(product, url).then(() => {
-          setSuccess("성공적으로 제품이 추가되었습니다.");
-          setTimeout(() => {
-            setSuccess(null);
-          }, 4000);
-        });
       })
       .finally(() => setIsUploading(false));
     // 제품의 사진을 Cloudinary에 업로드 하고 URL을 흭득
